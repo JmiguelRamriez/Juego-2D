@@ -6,11 +6,15 @@ using System.Collections.Generic;
 public class Personajeprincipal : MonoBehaviour
 {
     public float speed; // Velocidad de movimiento del personaje
-    private Rigidbody2D rb; // Componente Rigidbody2D para la f韘ica
+    [SerializeField]private BoxCollider2D colespada;
+
+    private float posicionx = 1; // Posici贸n X del personaje
+    private float posiciony = 0; // Posici贸n Y del personaje
+    private Rigidbody2D rb; // Componente Rigidbody2D para la f铆sica
     private Animator Controlador; // Componente Animator para las animaciones
     private SpriteRenderer spritepersonaje; // Componente SpriteRenderer para el sprite del personaje
 
-    // Inicializaci髇 de componentes
+    // Inicializaci贸n de componentes
     private void Awake()
     {
         rb = GetComponent<Rigidbody2D>(); // Obtener el componente Rigidbody2D
@@ -18,13 +22,32 @@ public class Personajeprincipal : MonoBehaviour
         spritepersonaje = GetComponent<SpriteRenderer>(); // Obtener el componente SpriteRenderer
     }
 
-    // M閠odo llamado al inicio del juego
+    private IEnumerator DesactivarEspada()
+    {
+        yield return new WaitForSeconds(0.5f); // Aumenta el tiempo temporalmente
+        colespada.enabled = false;
+    }
+
+
+
+
+    private void Update()
+    {
+        if (Input.GetMouseButtonDown(0))
+        {
+            Controlador.SetTrigger("Atacar");
+            colespada.enabled = true;
+            StartCoroutine(DesactivarEspada()); // esto la desactiva despu茅s
+        }
+    }
+
+    // M茅todo llamado al inicio del juego
     private void FixedUpdate()
     {
        movimiento();
     }
 
-    // M閠odo para manejar el movimiento del personaje
+    // M茅todo para manejar el movimiento del personaje
     private void movimiento()
     {
         // Obtener las entradas del usuario para el movimiento horizontal y vertical
@@ -38,13 +61,15 @@ public class Personajeprincipal : MonoBehaviour
         // Actualizar las animaciones del personaje
         Controlador.SetFloat("Correr", Mathf.Abs(movimiento.magnitude));
 
-        // Controlar la direcci髇 del sprite seg鷑 el movimiento horizontal
+        // Controlar la direcci贸n del sprite seg煤n el movimiento horizontal
         if (horizontal > 0)
         {
+            colespada.offset = new Vector2(posicionx, posiciony);
             spritepersonaje.flipX = false;
         }
         else if (horizontal < 0)
         {
+            colespada.offset = new Vector2(-posicionx, posiciony);
             spritepersonaje.flipX = true;
         }
     }

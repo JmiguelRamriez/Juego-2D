@@ -21,7 +21,7 @@ public class GameManager : MonoBehaviour
 
             // Buscar HUD si no está asignado
             if (hud == null)
-                hud = FindObjectOfType<HUD>();
+                hud = FindFirstObjectByType<HUD>();
         }
         else
         {
